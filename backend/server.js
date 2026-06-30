@@ -1,9 +1,10 @@
-require("dotenv").config();
 
-const express = require("express");
-const cors = require("cors");
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-const clubInfo = require("./data/clubData");
+import dotenv from "dotenv";
+dotenv.config();
+import express from "express";
+import cors from "cors";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import clubInfo from "./data/clubData.js";
 
 const app = express();
 

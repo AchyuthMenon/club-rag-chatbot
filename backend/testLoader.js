@@ -1,7 +1,7 @@
-const loadPDF = require("./services/pdfLoader");
+import loadPdf from "./services/pdfLoader.js";
 
 async function test() {
-  const text = await loadPDF();
+  const text = await loadPdf();
 
   console.log(text.slice(0, 1000));
 }

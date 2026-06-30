@@ -8,4 +8,4 @@ The faculty coordinator is Dr. John.
 The next hackathon is on July 15.
 `;
 
-module.exports = clubInfo;
+export default clubInfo;
