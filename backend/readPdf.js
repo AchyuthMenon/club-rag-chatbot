@@ -1,27 +1,38 @@
 import fs from "fs";
-import pdf from "pdf-parse";
+import pdf from "pdf-parse/lib/pdf-parse.js";
 import chunkText from "./utils/chunkText.js";
+import { embedTexts } from "./services/embeddingService.js";
+import { storeEmbeddings } from "./services/ingest.js";
 
 async function readPdf() {
-  const dataBuffer = fs.readFileSync("./docs/ieeePolicies.pdf");
+  try {
+    console.log("Reading PDF...");
 
-  const data = await pdf(dataBuffer);
+    const dataBuffer = fs.readFileSync("./docs/ieeePolicies.pdf");
+    const data = await pdf(dataBuffer);
 
-  const chunks = chunkText(data.text);
+    console.log("PDF loaded successfully!");
 
-  console.log("Number of chunks:", chunks.length);
+    const chunks = chunkText(data.text);
 
-  console.log("----------------");
-  console.log("Chunk 1");
-  console.log(chunks[0]);
+    console.log(`Number of chunks: ${chunks.length}\n`);
 
-  console.log("----------------");
-  console.log("Chunk 2");
-  console.log(chunks[1]);
+    console.time("Embedding Time");
 
-  console.log("----------------");
-  console.log("Chunk 3");
-  console.log(chunks[2]);
+    // Generate embeddings for all chunks in one call
+    const embeddings = await embedTexts(chunks);
+
+    console.timeEnd("Embedding Time");
+
+    console.log("\nStoring embeddings in ChromaDB...");
+
+    await storeEmbeddings(chunks, embeddings);
+
+    console.log("\n✅ PDF successfully ingested into ChromaDB!");
+  } catch (error) {
+    console.error("\n❌ Error during PDF ingestion:");
+    console.error(error);
+  }
 }
 
 readPdf();
